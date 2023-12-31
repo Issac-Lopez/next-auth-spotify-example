@@ -47,7 +47,7 @@ import GitHub from "next-auth/providers/github"
 // import Reddit from "next-auth/providers/reddit"
 // import Salesforce from "next-auth/providers/salesforce"
 // import Slack from "next-auth/providers/slack"
-// import Spotify from "next-auth/providers/spotify"
+import Spotify from "next-auth/providers/spotify"
 // import Strava from "next-auth/providers/strava"
 // import Todoist from "next-auth/providers/todoist"
 // import Trakt from "next-auth/providers/trakt"
@@ -117,7 +117,20 @@ export const config = {
     // Reddit,
     // Salesforce,
     // Slack,
-    // Spotify,
+    Spotify({
+      clientId: process.env.SPOTIFY_CLIENT_ID ?? "",
+      clientSecret: process.env.SPOTIFY_CLIENT_SECRET ?? "",
+      authorization: {
+        URL: "https://accounts.spotify.com/authorize",
+        params: {
+          scope: [
+            "user-read-email",
+            "user-read-private",
+            "user-follow-read",
+          ].join(" "),
+        },
+      },
+    }),
     // Strava,
     // Todoist,
     // Trakt,
@@ -135,11 +148,11 @@ export const config = {
   ],
   callbacks: {
     authorized({ request, auth }) {
-      const { pathname } = request.nextUrl
-      if (pathname === "/middleware-example") return !!auth
-      return true
+      const { pathname } = request.nextUrl;
+      if (pathname === "/middleware-example") return !!auth;
+      return true;
     },
   },
-} satisfies NextAuthConfig
+} satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config)
